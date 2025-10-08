@@ -109,3 +109,95 @@ TOPICOS = [
         "dica": "Praticar os 3 R's (**Reduzir, Reutilizar, Reciclar**) e participar de mutirões de limpeza.",
     },
     {
+        "titulo": "6. Impacto na Pesca Artesanal",
+        "causas": "Mudança nas rotas migratórias dos peixes devido à **temperatura da água** e alterações nas correntes.",
+        "influencia": "Afeta a principal fonte de renda e subsistência de comunidades pesqueiras tradicionais brasileiras.",
+        "consequencias": "Diminuição do estoque pesqueiro, insegurança alimentar e êxodo das comunidades costeiras.",
+        "dica": "Apoiar a **pesca sustentável** e consumir peixes certificados que não estejam em risco de extinção.",
+    },
+]
+
+
+# --- 3. LAYOUT UNIFICADO (ABAS) ---
+
+tab_graficos, tab_analise = st.tabs(["📊 Gráficos de Dados Abertos e Tendências", "💡 Análise e Conscientização no Brasil"])
+
+# =================================================================
+# ABA 1: GRÁFICOS DE DADOS ABERTOS (UNIFICADO)
+# =================================================================
+with tab_graficos:
+    st.header("1. Tendências de Longo Prazo e Risco")
+    
+    col_temp, col_nivel, col_risco = st.columns(3)
+    
+    with col_temp:
+        st.markdown("##### Temperatura Média Anual (INMET)")
+        fig_temp = px.line(df_tendencia, x='Ano', y='Temp_Media_Anual_C', markers=True, height=250)
+        st.plotly_chart(fig_temp, use_container_width=True)
+    
+    with col_nivel:
+        st.markdown("##### Aumento do Nível do Mar (NOAA)")
+        fig_nivel = px.line(df_nivel_longo, x='Ano', y='Nivel_Medio_Mar_cm', line_shape='spline', height=250)
+        st.plotly_chart(fig_nivel, use_container_width=True)
+
+    with col_risco:
+        st.markdown("##### Alertas de Deslizamentos (CEMADEN)")
+        fig_risco = px.bar(df_risco, x='Estado', y='Alertas_Recentes', height=250)
+        st.plotly_chart(fig_risco, use_container_width=True)
+
+    st.markdown("---")
+    
+    st.header("2. Previsão Operacional e Biodiversidade")
+    
+    col_mare, col_vento, col_corais = st.columns(3)
+
+    with col_mare:
+        st.markdown("##### Previsão de Nível da Maré (Marinha do Brasil)")
+        fig_mare = px.area(df_mare.reset_index(), x='Data_Hora', y='Nivel_Maré_m', height=250)
+        st.plotly_chart(fig_mare, use_container_width=True)
+        
+    with col_vento:
+        st.markdown("##### Previsão de Vento Diário (OpenWeatherMap)")
+        fig_vento = px.bar(df_vento, x='Dia', y='Velocidade_Vento_Nós', height=250)
+        st.plotly_chart(fig_vento, use_container_width=True)
+
+    with col_corais:
+        st.markdown("##### Ocorrências de Branqueamento (SiBBr)")
+        fig_corais = px.bar(df_corais, x='Ano', y='Ocorrencias_Branqueamento', height=250)
+        st.plotly_chart(fig_corais, use_container_width=True)
+
+    st.caption("Fonte: Dados provenientes de APIs abertas (INMET, NOAA, Marinha, CEMADEN, SiBBr, OpenWeatherMap) - **Simulação para Template**.")
+
+
+# =================================================================
+# ABA 2: ANÁLISE E CONSCIENTIZAÇÃO (UNIFICADO)
+# =================================================================
+with tab_analise:
+    st.header("Análise Explícita de Impactos: Cultura Oceânica no Brasil")
+    st.info("Aprofunde-se nas causas e consequências do clima no oceano brasileiro. Sua ação é fundamental.")
+
+    # Exibição dos Tópicos
+    for i, topico in enumerate(TOPICOS):
+        st.markdown(f"### {topico['titulo']}")
+        st.markdown("---")
+        
+        col_causas, col_influencia, col_cons, col_dica = st.columns(4)
+
+        with col_causas:
+            st.markdown(f"**Causas:**")
+            st.write(f"👉 {topico['causas']}")
+        
+        with col_influencia:
+            st.markdown(f"**O que Influencia:**")
+            st.warning(f"💡 {topico['influencia']}")
+        
+        with col_cons:
+            st.markdown(f"**Consequências no Brasil:**")
+            st.error(f"⚠️ {topico['consequencias']}")
+            
+        with col_dica:
+            st.markdown(f"**Ação de Cultura Oceânica (Dica):**")
+            st.success(f"✅ {topico['dica']}")
+        
+        if i < len(TOPICOS) - 1:
+            st.markdown("---")
