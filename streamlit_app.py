@@ -81,7 +81,8 @@ with col1:
     # Slider para selecionar o intervalo de anos
     anos_temperatura = st.slider(
         "Selecione o intervalo de anos para a temperatura do mar:",
-        1980, 2024, (1980, 2024)
+        1980, 2024, (1980, 2024),
+        key="slider_temp" # Chave única para o slider
     )
 
     # Gera e filtra os dados com base no slider
@@ -106,7 +107,8 @@ with col2:
     # Slider para selecionar o intervalo de anos
     anos_nivel_mar = st.slider(
         "Selecione o intervalo de anos para o nível do mar:",
-        1993, 2024, (1993, 2024)
+        1993, 2024, (1993, 2024),
+        key="slider_nivel" # Chave única para o slider
     )
 
     # Gera e filtra os dados com base no slider
@@ -134,3 +136,4 @@ A conscientização é o primeiro passo! Ao entender a conexão entre nossas aç
 - **Apoie a conservação marinha:** Participe de limpezas de praia e apoie organizações que protegem o oceano.
 - **Compartilhe conhecimento:** Converse com amigos e familiares sobre a importância dos oceanos!
 """)
+
