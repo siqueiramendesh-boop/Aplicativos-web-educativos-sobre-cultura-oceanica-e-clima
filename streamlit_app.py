@@ -1,126 +1,161 @@
 import streamlit as st
 import pandas as pd
-import requests
 import plotly.express as px
 from datetime import datetime
 
 # --- Configurações do Aplicativo Streamlit ---
 st.set_page_config(
-    page_title="Ocean & Clima App (Dados Abertos)",
+    page_title="OceanApp Brasil: Clima e Oceano",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # Título Principal do App
-st.title("🌊 OceanApp: Monitoramento Oceânico e Climático")
-st.subheader("Visualizando Dados Abertos para Cultura Oceânica e Conscientização Climática")
+st.title("🌊 OceanApp Brasil: Monitoramento, Cultura e Clima")
+st.subheader("Análise de Dados Abertos e Conscientização para o Litoral Brasileiro")
 
-# --- 1. Função de Coleta de Dados (Simulação de API de Dados Abertos) ---
-# NOTA: Em um aplicativo real, você usaria sua própria chave API da OpenWeatherMap, Climatempo ou de um órgão governamental.
-# A estrutura de dados JSON abaixo simula uma resposta de API de dados abertos de previsão horária.
-
-def get_dados_climaticos_simulados(cidade):
-    """
-    Simula a obtenção de dados de previsão de tempo e maré de uma API pública.
-    Os dados reais de temperatura e umidade são substituídos por valores de exemplo
-    para garantir que o código funcione sem uma chave API real.
-    """
+# --- 1. Função de Simulação de Dados para Gráficos ---
+# NOTA: Esta função simula dados de Tendência Climática de 10 anos e Maré de 2 dias.
+# Em uma aplicação real, estes seriam substituídos por chamadas a APIs Abertas (ex: INMET, Marinha, Satélites).
+def get_dados_simulados():
+    """Simula dados de tendências de 10 anos e previsão de 48h para demonstração."""
     
-    # Simulação de dados de 7 dias (horários)
-    data_hoje = datetime.now().date()
-    horas = pd.date_range(start=f'{data_hoje} 00:00', periods=48, freq='H') # 48 horas (2 dias)
-
-    # Dados Simples (para o propósito do App) - Tente usar fontes de dados Abertos Brasileiras como INMET ou Marinha.
-    dados = {
-        'Data_Hora': horas,
-        'Temperatura_C': [25, 26, 27, 26, 25, 24, 23, 22, 21, 22, 23, 24, 25, 26, 27, 28, 27, 26, 25, 24, 23, 22, 21, 20] * 2,
-        'Umidade_Perc': [70, 68, 65, 66, 68, 72, 75, 78, 80, 75, 70, 65, 60, 58, 55, 53, 55, 58, 62, 68, 72, 75, 78, 80] * 2,
-        'Velocidade_Vento_Nós': [5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 5, 7, 9, 10, 11, 10, 9, 8, 7, 6, 5, 4, 3] * 2,
-        'Nivel_Maré_m': [0.5, 0.8, 1.2, 1.0, 0.6, 0.2, 0.1, 0.4, 0.9, 1.5, 1.3, 0.7, 0.4, 0.8, 1.3, 1.1, 0.7, 0.3, 0.2, 0.5, 1.0, 1.4, 1.2, 0.6] * 2
+    # 1. Dados de Tendência Climática (10 anos)
+    anos = pd.date_range(start='2015-01-01', periods=10, freq='Y')
+    tendencia_data = {
+        'Ano': anos,
+        'Temp_Media_Anual_C': [25.0, 25.2, 25.4, 25.1, 25.3, 25.6, 25.8, 26.0, 26.2, 26.5],
+        'Nivel_Medio_Mar_cm': [10.0, 10.5, 11.0, 11.2, 11.5, 11.9, 12.3, 12.8, 13.3, 14.0],
     }
+    df_tendencia = pd.DataFrame(tendencia_data)
+    df_tendencia['Ano'] = df_tendencia['Ano'].dt.year
+
+    # 2. Dados de Previsão de Maré (48 horas)
+    data_hoje = datetime.now().date()
+    horas = pd.date_range(start=f'{data_hoje} 00:00', periods=48, freq='H') 
+    mare_data = {
+        'Data_Hora': horas,
+        'Nivel_Maré_m': [0.5, 0.8, 1.2, 1.0, 0.6, 0.2, 0.1, 0.4, 0.9, 1.5, 1.3, 0.7, 0.4, 0.8, 1.3, 1.1, 0.7, 0.3, 0.2, 0.5, 1.0, 1.4, 1.2, 0.6] * 2,
+    }
+    df_mare = pd.DataFrame(mare_data).set_index('Data_Hora')
     
-    # Cria o DataFrame
-    df = pd.DataFrame(dados)
-    df['Data_Hora'] = pd.to_datetime(df['Data_Hora'])
-    df = df.set_index('Data_Hora')
+    return df_tendencia, df_mare
+
+df_tendencia, df_mare = get_dados_simulados()
+
+# --- 2. Tópicos de Cultura Oceânica e Clima no Brasil (Resumo e Explicação) ---
+
+# Definição dos tópicos (mínimo 5, máximo 9)
+TOPICOS = [
+    {
+        "titulo": "1. Aumento do Nível do Mar",
+        "causas": "Degelo de calotas polares e expansão térmica da água do mar devido ao aquecimento global.",
+        "influencia": "Impacta 8.500 km da costa brasileira, afetando cidades litorâneas e ecossistemas de **manguezais**.",
+        "consequencias": "Inundações costeiras mais frequentes, perda de habitat, salinização de lençóis freáticos e erosão costeira.",
+        "dica": "Apoiar planos municipais de adaptação costeira e usar dados de **altimetria** (satélites) para monitoramento local.",
+    },
+    {
+        "titulo": "2. Acidificação Oceânica",
+        "causas": "O oceano absorve cerca de 30% do dióxido de carbono ($CO_2$) liberado na atmosfera, diminuindo seu pH.",
+        "influencia": "Diretamente ligado às **emissões de gases de efeito estufa** no Brasil (desmatamento, transporte, indústria).",
+        "consequencias": "Dificuldade de organismos como corais, ostras e moluscos em formar conchas e esqueletos de carbonato de cálcio. Risco à **aquicultura** brasileira.",
+        "dica": "Reduzir o consumo de carne bovina (relacionada ao desmatamento) e apoiar a transição para energias renováveis.",
+    },
+    {
+        "titulo": "3. Eventos Climáticos Extremos",
+        "causas": "Alterações nos padrões de circulação atmosférica e oceânica (como o **El Niño** e **La Niña**), intensificando fenômenos.",
+        "influencia": "Provoca **secas** severas no Nordeste e **chuvas intensas** e inundações no Sul e Sudeste do Brasil.",
+        "consequencias": "Perdas na agricultura, deslizamentos de terra (em áreas costeiras e serranas), e danos à infraestrutura portuária.",
+        "dica": "Consultar a previsão de tempo e maré da Marinha e do INMET (dados abertos) antes de atividades no mar ou na costa.",
+    },
+    {
+        "titulo": "4. Branqueamento de Corais",
+        "causas": "Aumento da temperatura da água (estresse térmico) expulsa as algas simbióticas (zooxantelas) que dão cor e alimento aos corais.",
+        "influencia": "Afeta ecossistemas de recifes críticos, como os de **Abrolhos** (BA), essenciais para a biodiversidade marinha.",
+        "consequencias": "Morte dos corais, perda de habitats para peixes e invertebrados, e redução da proteção costeira contra ondas.",
+        "dica": "Apoiar unidades de conservação marinhas e evitar o uso de protetores solares com oxibenzona, que prejudicam os corais.",
+    },
+    {
+        "titulo": "5. Poluição Marinha por Plástico",
+        "causas": "Gestão inadequada de resíduos sólidos em áreas costeiras e urbanas, além do descarte ilegal em rios.",
+        "influencia": "A **Baía de Guanabara** e a foz de grandes rios são pontos críticos de entrada de plástico no oceano.",
+        "consequencias": "Ingestão e sufocamento da fauna marinha (tartarugas, peixes, aves) e contaminação por **microplásticos** na cadeia alimentar.",
+        "dica": "Priorizar o consumo de produtos sustentáveis, evitar plásticos de uso único e participar de mutirões de limpeza de praia (ações de **Cultura Oceânica**).",
+    },
+]
+
+# --- 3. Geração dos Gráficos com Dados Abertos (Simulados) ---
+
+# Aba Principal para os Tópicos e Gráficos
+tab1, tab2, tab3 = st.tabs(["📊 Tendências Climáticas (10 Anos)", "🌊 Previsão de Maré (48h)", "💡 Análise e Conscientização"])
+
+with tab1:
+    st.header("Gráfico 1: Aquecimento e Subida do Nível do Mar (Tendência de 10 Anos)")
+    st.info("Visualização baseada em dados abertos (Simulados) para mostrar o aumento de temperatura e nível do mar na costa brasileira.")
     
-    return df
+    col_a, col_b = st.columns(2)
 
-# --- 2. Interface do Usuário (Streamlit Sidebar) ---
+    with col_a:
+        fig_temp_decada = px.line(
+            df_tendencia,
+            x='Ano',
+            y='Temp_Media_Anual_C',
+            title='Tendência de Temperatura Média Anual (°C)',
+            labels={'Temp_Media_Anual_C': 'Temperatura Média Anual (°C)'},
+            markers=True
+        )
+        st.plotly_chart(fig_temp_decada, use_container_width=True)
 
-with st.sidebar:
-    st.header("Parâmetros de Pesquisa")
-    cidade_selecionada = st.selectbox(
-        "Selecione uma Cidade Costeira",
-        ("Rio de Janeiro, RJ", "Florianópolis, SC", "Salvador, BA", "Recife, PE")
-    )
-    st.info(f"Dados abertos para **{cidade_selecionada}** (Simulação de API).")
+    with col_b:
+        fig_nivel_decada = px.bar(
+            df_tendencia,
+            x='Ano',
+            y='Nivel_Medio_Mar_cm',
+            title='Tendência de Aumento do Nível Médio do Mar (cm)',
+            labels={'Nivel_Medio_Mar_cm': 'Aumento do Nível (cm)'}
+        )
+        st.plotly_chart(fig_nivel_decada, use_container_width=True)
 
-# --- 3. Coleta e Processamento dos Dados ---
+    st.caption("Fonte: Dados climáticos e oceanográficos abertos (Simulação baseada em tendências reais).")
 
-df_clima = get_dados_climaticos_simulados(cidade_selecionada)
+with tab2:
+    st.header("Gráfico 2: Previsão Detalhada de Maré (48 Horas)")
+    st.info("Dados cruciais para a segurança da navegação, pesca e gestão costeira. Em aplicações reais, use a API da Marinha do Brasil.")
 
-
-# --- 4. Visualização dos Dados (Gráficos Reais Gerados a Partir dos Dados Abertos) ---
-
-st.header(f"Previsão de 48 Horas para {cidade_selecionada}")
-
-# Gráfico 1: Temperatura e Umidade (Clima)
-st.markdown("### 🌡️ Temperatura e Umidade do Ar")
-fig_temp = px.line(
-    df_clima,
-    y=['Temperatura_C', 'Umidade_Perc'],
-    title='Variação de Temperatura e Umidade (48h)',
-    labels={'value': 'Valor', 'Data_Hora': 'Data/Hora', 'variable': 'Variável'}
-)
-# Personalização do Plotly
-fig_temp.update_layout(height=400, legend_title_text='Medidas')
-fig_temp.update_traces(mode='lines+markers') # Adiciona marcadores para interatividade
-st.plotly_chart(fig_temp, use_container_width=True)
-st.caption("Fonte: Dados Climáticos Abertos (INMET/Simulação de API).")
-
-
-st.markdown("---")
-
-# Gráfico 2: Condições Oceânicas (Vento e Maré)
-st.markdown("### 🌬️ Condições Oceânicas (Vento e Maré)")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    st.markdown("#### Velocidade do Vento (Nós)")
-    fig_vento = px.bar(
-        df_clima,
-        y='Velocidade_Vento_Nós',
-        title='Velocidade do Vento',
-        labels={'Velocidade_Vento_Nós': 'Vento (Nós)'}
-    )
-    fig_vento.update_layout(height=350)
-    st.plotly_chart(fig_vento, use_container_width=True)
-
-with col2:
-    st.markdown("#### Nível da Maré (Metros)")
     fig_mare = px.area(
-        df_clima,
+        df_mare,
         y='Nivel_Maré_m',
-        title='Nível da Maré',
-        labels={'Nivel_Maré_m': 'Maré (m)'}
+        title='Variação do Nível da Maré em 48 Horas',
+        labels={'Nivel_Maré_m': 'Nível da Maré (metros)', 'Data_Hora': 'Data e Hora'},
+        line_shape='spline'
     )
-    fig_mare.update_layout(height=350)
+    fig_mare.update_layout(height=500)
     st.plotly_chart(fig_mare, use_container_width=True)
-    
-st.caption("Fonte: Dados Oceânicos Abertos (Marinha do Brasil/Simulação de API).")
+    st.caption("Fonte: Dados Oceânicos Abertos (Simulação de previsão de maré).")
 
-st.markdown("---")
 
-# --- 5. Componente de Cultura Oceânica ---
+with tab3:
+    st.header("Análise Detalhada dos Tópicos")
+    st.info("Abaixo, uma visão explícita de como a relação oceano-clima afeta o Brasil e como podemos agir (Cultura Oceânica).")
 
-st.header("Educação e Cultura Oceânica")
-st.info("""
-**Por que isso importa?**
-O oceano é um regulador fundamental do clima global, absorvendo calor e dióxido de carbono ($CO_2$).
-Monitorar variáveis como a **temperatura** e o **nível da maré** em áreas costeiras é crucial para entender
-os impactos da mudança climática na vida marinha e nas comunidades costeiras.
-""")
+    # Exibição dos Tópicos
+    for i, topico in enumerate(TOPICOS):
+        st.markdown(f"### {topico['titulo']}")
+        st.markdown("---")
+        
+        col1, col2, col3 = st.columns([1, 1, 1])
 
-st.write("A **cultura oceânica** promove a compreensão da influência do oceano sobre nós e nossa influência sobre o oceano.")
+        with col1:
+            st.markdown(f"**Causas e O que Influencia:**")
+            st.write(f"- {topico['causas']}")
+        
+        with col2:
+            st.markdown(f"**Consequências no Brasil:**")
+            st.warning(f"- {topico['consequencias']}")
+        
+        with col3:
+            st.markdown(f"**Ação de Cultura Oceânica (Dica):**")
+            st.success(f"- {topico['dica']}")
+        
+        if i < len(TOPICOS) - 1:
+            st.markdown("---")
