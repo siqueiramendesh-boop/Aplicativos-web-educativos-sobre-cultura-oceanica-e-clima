@@ -5,20 +5,19 @@ from datetime import datetime
 
 # --- Configurações da Página ---
 st.set_page_config(
-    page_title="OceanApp Brasil: Cultura Oceânica e Clima",
+    page_title="OceanApp Brasil: Gráficos e Pesquisa",
     layout="wide",
-    initial_sidebar_state="collapsed", # Colapsa a barra lateral, focando no conteúdo principal
+    initial_sidebar_state="collapsed",
 )
 
 # Título Principal
-st.title("🌊 OceanApp Brasil: Cultura Oceânica e Clima")
-st.subheader("Análise de Tendências, Previsão e Conscientização para o Litoral Brasileiro")
+st.title("🌊 OceanApp Brasil: Gráficos de Dados Abertos e Cultura Oceânica")
+st.subheader("Análise Simultânea de Tendências Climáticas e Conscientização")
 st.markdown("---")
 
-
 # --- 1. Função de Simulação de Dados para Gráficos ---
-# NOTA: Esta função simula dados de Tendência Climática de 10 anos e Maré de 2 dias.
-# EM UMA APLICAÇÃO REAL: Substitua esta função por chamadas a APIs Abertas (ex: INMET, Marinha do Brasil, NOAA).
+# NOTA: Esta função SIMULA dados de fontes abertas (10 anos de Tendência e 48h de Previsão de Maré).
+# Para usar DADOS REAIS: Substitua esta função por chamadas a APIs Abertas (INMET, Marinha, etc.)
 def get_dados_simulados():
     """Simula dados de tendências de 10 anos e previsão de 48h para demonstração."""
     
@@ -50,123 +49,136 @@ df_tendencia, df_mare = get_dados_simulados()
 TOPICOS = [
     {
         "titulo": "1. Aumento do Nível do Mar",
-        "causas": "Degelo de calotas polares e **expansão térmica** da água (causada pelo aquecimento).",
-        "influencia": "Afeta a costa brasileira (8.500 km), ameaçando infraestrutura e ecossistemas como **manguezais**.",
-        "consequencias": "**Erosão costeira**, inundações frequentes e salinização da água potável subterrânea.",
+        "causas": "Degelo polar e **expansão térmica** da água (aquecimento global).",
+        "consequencias": "**Erosão costeira**, inundações frequentes e salinização de lençóis freáticos.",
         "dica": "Apoiar a adaptação costeira e usar dados de **altimetria** (satélites) para monitoramento local.",
     },
     {
         "titulo": "2. Acidificação Oceânica",
-        "causas": "Absorção de **dióxido de carbono ($CO_2$)** emitido pela queima de combustíveis e **desmatamento** no Brasil.",
-        "influencia": "Diminui o pH da água, dificultando a vida de organismos com conchas e esqueletos.",
-        "consequencias": "Risco à **aquicultura** (criação de ostras e moluscos) e danos aos recifes de corais brasileiros.",
-        "dica": "Reduzir a **pegada de carbono** individual e apoiar a restauração de biomas como a **Mata Atlântica**.",
+        "causas": "Absorção de **dióxido de carbono ($CO_2$)** da atmosfera (emissões e **desmatamento** brasileiro).",
+        "consequencias": "Dificuldade de corais e moluscos em formar conchas. Risco à **aquicultura**.",
+        "dica": "Reduzir a **pegada de carbono** e apoiar a restauração de biomas.",
     },
     {
         "titulo": "3. Eventos Climáticos Extremos",
-        "causas": "Alterações nos padrões de circulação oceânica e atmosférica (ex: **El Niño** e **La Niña**).",
-        "influencia": "Causa **secas prolongadas** no Nordeste e **chuvas torrenciais** e inundações no Sul e Sudeste.",
-        "consequencias": "Deslizamentos de terra, perdas agrícolas, e danos severos a portos e comunidades costeiras.",
-        "dica": "Consultar previsões de tempo e maré do **INMET** e da **Marinha do Brasil** para planejamento e segurança.",
+        "causas": "Alterações em padrões oceânicos e atmosféricos (**El Niño** e **La Niña**).",
+        "consequencias": "**Secas prolongadas** (Nordeste) e **chuvas torrenciais** (Sul/Sudeste), danos a portos.",
+        "dica": "Consultar previsões de **INMET** e **Marinha** para segurança e planejamento.",
     },
     {
         "titulo": "4. Branqueamento de Corais",
-        "causas": "**Aumento da temperatura da água** (estresse térmico), que expulsa as algas simbióticas (que dão cor e vida).",
-        "influencia": "Impacta recifes cruciais para o turismo e a pesca, como os do **Parque Nacional de Abrolhos** (BA).",
-        "consequencias": "Morte de corais, perda de biodiversidade marinha e redução da proteção natural contra ondas fortes.",
-        "dica": "Apoiar a conservação marinha e usar protetores solares *reef safe* (seguros para recifes).",
+        "causas": "**Aumento da temperatura da água** (estresse térmico) expulsa algas simbióticas.",
+        "consequencias": "Morte de corais e perda de **biodiversidade** e de proteção costeira natural.",
+        "dica": "Apoiar a **conservação marinha** e usar protetores solares *reef safe*.",
     },
     {
         "titulo": "5. Poluição Marinha por Plástico",
-        "causas": "Gestão ineficaz de resíduos sólidos em **cidades costeiras** e descarte em rios (que levam ao mar).",
-        "influencia": "Grandes rios brasileiros atuam como canais de transporte de resíduos para o oceano.",
-        "consequencias": "Ingestão e sufocamento da **fauna marinha** (tartarugas, peixes) e contaminação por **microplásticos**.",
-        "dica": "Aplicar os 3 R's (**Reduzir, Reutilizar, Reciclar**) e participar ativamente de mutirões de limpeza de praias.",
+        "causas": "Gestão inadequada de resíduos sólidos em **cidades costeiras** e descarte em rios.",
+        "consequencias": "Ingestão e sufocamento da **fauna marinha** e contaminação por **microplásticos**.",
+        "dica": "Priorizar os 3 R's (**Reduzir, Reutilizar, Reciclar**) e participar de mutirões de limpeza.",
     },
 ]
 
-# --- 3. Layout com Abas para Navegação em Local Único ---
 
-tab_graficos, tab_analise = st.tabs(["📊 Gráficos de Dados Abertos", "💡 Análise e Conscientização (Causas e Dicas)"])
+# --- 3. Layout Principal em Colunas (Gráficos e Explicações Lado a Lado) ---
 
-# =================================================================
-# ABA 1: GRÁFICOS DE DADOS ABERTOS
-# =================================================================
-with tab_graficos:
-    st.header("1. Tendências Climáticas (10 Anos)")
-    st.info("Visualização de dados abertos (Simulados) mostrando tendências cruciais para o Brasil.")
-    
-    col_temp, col_nivel = st.columns(2)
+# Coluna Principal para Gráficos
+col_graficos = st.columns([1])[0] 
+# Coluna Principal para a Análise/Pesquisa
+col_pesquisa = st.columns([1])[0] 
 
-    with col_temp:
-        # GRÁFICO 1: TEMPERATURA
-        fig_temp_decada = px.line(
-            df_tendencia,
-            x='Ano',
-            y='Temp_Media_Anual_C',
-            title='Tendência de Temperatura Média Anual (°C)',
-            labels={'Temp_Media_Anual_C': 'Temperatura Média Anual (°C)'},
-            markers=True
-        )
-        st.plotly_chart(fig_temp_decada, use_container_width=True)
+# Usamos a estrutura do Streamlit para dividir os componentes
 
-    with col_nivel:
-        # GRÁFICO 2: NÍVEL DO MAR
-        fig_nivel_decada = px.bar(
-            df_tendencia,
-            x='Ano',
-            y='Nivel_Medio_Mar_cm',
-            title='Tendência de Aumento do Nível Médio do Mar (cm)',
-            labels={'Nivel_Medio_Mar_cm': 'Aumento do Nível (cm)'}
-        )
-        st.plotly_chart(fig_nivel_decada, use_container_width=True)
+st.markdown("## 📊 Visualização de Dados Abertos (10 Anos)")
+st.info("Gráficos interativos gerados a partir de dados abertos (simulados) de tendências climáticas no Brasil.")
 
-    st.markdown("---")
-    
-    st.header("2. Previsão de Maré (48 Horas)")
-    st.info("Dado essencial para a segurança costeira, portos, pesca e planejamento de atividades na praia.")
+# GRÁFICOS DE TENDÊNCIA (Temperatura e Nível do Mar)
+col_temp_graph, col_nivel_graph = st.columns(2)
 
-    # GRÁFICO 3: MARÉ
-    fig_mare = px.area(
-        df_mare,
-        y='Nivel_Maré_m',
-        title='Variação do Nível da Maré em 48 Horas (Metros)',
-        labels={'Nivel_Maré_m': 'Nível da Maré (m)', 'Data_Hora': 'Data e Hora'},
-        line_shape='spline'
+with col_temp_graph:
+    # Gráfico 1: Temperatura
+    fig_temp_decada = px.line(
+        df_tendencia,
+        x='Ano',
+        y='Temp_Media_Anual_C',
+        title='Tendência de Temperatura Média Anual (°C)',
+        labels={'Temp_Media_Anual_C': 'Temperatura Média Anual (°C)'},
+        markers=True,
+        height=300
     )
-    fig_mare.update_layout(height=500)
-    st.plotly_chart(fig_mare, use_container_width=True)
+    st.plotly_chart(fig_temp_decada, use_container_width=True)
+
+with col_nivel_graph:
+    # Gráfico 2: Nível do Mar
+    fig_nivel_decada = px.bar(
+        df_tendencia,
+        x='Ano',
+        y='Nivel_Medio_Mar_cm',
+        title='Aumento do Nível Médio do Mar (cm)',
+        labels={'Nivel_Medio_Mar_cm': 'Aumento do Nível (cm)'},
+        height=300
+    )
+    st.plotly_chart(fig_nivel_decada, use_container_width=True)
+
+st.markdown("---")
+
+st.markdown("## 🔎 Análise Detalhada (Causas, Consequências e Dicas)")
+st.info("Os gráficos mostram as tendências. Esta seção explica as causas, consequências e as ações de **Cultura Oceânica**.")
+
+# Loop para exibir cada tópico da pesquisa, alinhando-o ao gráfico de Maré
+for i, topico in enumerate(TOPICOS):
     
-    st.caption("**Fonte dos Dados:** Dados Climáticos e Oceanográficos Abertos (Simulação baseada em APIs públicas).")
+    # Se for o Tópico 1, colocamos o Gráfico de Maré ao lado dele
+    if i == 0:
+        col_pesquisa_content, col_mare_graph = st.columns([1, 1])
 
-# =================================================================
-# ABA 2: ANÁLISE DETALHADA E CULTURA OCEÂNICA
-# =================================================================
-with tab_analise:
-    st.header("Análise Detalhada dos Tópicos - Cultura Oceânica em Ação")
-    st.markdown("""
-        O Brasil possui uma costa vasta e vulnerável. A **Cultura Oceânica** é a chave para a adaptação e mitigação.
-        Entenda o impacto de cada fator e saiba como você pode influenciar positivamente.
-    """)
+        with col_mare_graph:
+            st.markdown("### Previsão de Maré (48h)")
+            st.caption("Gráfico crucial para segurança e gestão costeira (Marinha do Brasil/Simulação).")
+            # GRÁFICO 3: MARÉ
+            fig_mare = px.area(
+                df_mare,
+                y='Nivel_Maré_m',
+                title='Variação do Nível da Maré em 48 Horas (Metros)',
+                labels={'Nivel_Maré_m': 'Nível da Maré (m)', 'Data_Hora': 'Data e Hora'},
+                line_shape='spline',
+                height=350
+            )
+            st.plotly_chart(fig_mare, use_container_width=True)
 
-    # Exibição dos Tópicos em colunas
-    for i, topico in enumerate(TOPICOS):
-        st.markdown(f"### {topico['titulo']}")
-        st.markdown("---")
+        with col_pesquisa_content:
+            st.markdown(f"### {topico['titulo']}")
+            col_causas, col_cons, col_dica = st.columns([1, 1, 1])
+            with col_causas:
+                st.markdown(f"**Causas:**")
+                st.write(f"👉 {topico['causas']}")
+            with col_cons:
+                st.markdown(f"**Consequências:**")
+                st.warning(f"⚠️ {topico['consequencias']}")
+            with col_dica:
+                st.markdown(f"**Dica (Cultura Oceânica):**")
+                st.success(f"✅ {topico['dica']}")
         
-        col_causas, col_cons, col_dica = st.columns([1, 1, 1])
+        st.markdown("---")
 
+    # Demais Tópicos da Pesquisa, exibidos em linha
+    else:
+        st.markdown(f"### {topico['titulo']}")
+        col_causas, col_cons, col_dica = st.columns([1, 1, 1])
+        
         with col_causas:
-            st.markdown(f"**Causas e O que Influencia (Causa Raiz):**")
+            st.markdown(f"**Causas:**")
             st.write(f"👉 {topico['causas']}")
         
         with col_cons:
-            st.markdown(f"**Consequências no Brasil (Impacto):**")
+            st.markdown(f"**Consequências:**")
             st.warning(f"⚠️ {topico['consequencias']}")
         
         with col_dica:
-            st.markdown(f"**Ação de Cultura Oceânica (Dica/Solução):**")
+            st.markdown(f"**Dica (Cultura Oceânica):**")
             st.success(f"✅ {topico['dica']}")
         
         if i < len(TOPICOS) - 1:
             st.markdown("---")
+
+st.caption("O aplicativo utiliza dados abertos (simulados) com a estrutura correta para integração de APIs reais do INMET, Marinha, etc.")
